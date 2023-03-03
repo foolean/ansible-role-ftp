@@ -9,12 +9,17 @@
 - name: Role foolean/ftp
   block:
 
-    - name: Ensure FTP (ftp/vsftp) Server is not installed (CIS)
+    - name: Set OS variables
+      ansible.builtin.include_vars:
+        file: "{{ item }}"
+      with_first_found:
+        - "{{ ansible_os_family|lower }}.yml"
+        - "default.yml"
+
+    - name: Ensure FTP Server is not installed (CIS)
       become: true
       ansible.builtin.package:
-        name:
-          - 'ftp'
-          - 'vsftpd'
+        name: "{{ ftp_server_packages }}"
         state: absent
 
   # Tags to be applied to this role (block)
